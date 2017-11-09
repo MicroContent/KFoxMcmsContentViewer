@@ -14,6 +14,26 @@
             registerOnSubmitListener(func)
         }
     </script>
+    <style type="text/css">
+        .choicecardoptions label {
+            color: rgba(0,0,0,0.7)
+        }
+        .choicecardoptions label:hover {
+            color: rgba(0,0,0,0.8)
+        }
+        .choicecardoptions .truechecked{
+            color: green;
+            font-weight: bold;
+        }
+        .choicecardoptions .falsechecked{
+            color: red;
+            text-decoration: line-through;
+        }
+        .choicecardoptions .trueunchecked{
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 <!-- EXAMPLE CODE - EDIT BELOW TO VIEW DATA -->
@@ -39,7 +59,7 @@
             for (var i = 0; i < checkboxes.length; i++) {
                 var isChecked = checkboxes[i].checked;
                 var isCorrect = window.data.answers[i].correct;
-                checkboxes[i].setAttribute('class',
+                checkboxes[i].parentElement.setAttribute('class',
                     isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
                 checkboxes[i].setAttribute('disabled', 'true');
             }
@@ -47,7 +67,7 @@
         } else {
             // remove classes and enable
             for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].removeAttribute('class');
+                checkboxes[i].parentElement.removeAttribute('class');
                 checkboxes[i].removeAttribute('disabled');
             }
             isShowingSolution = false;
