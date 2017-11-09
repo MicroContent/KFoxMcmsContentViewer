@@ -13,13 +13,23 @@
     </script>
 </head>
 <body>
-    <!-- EXAMPLE CODE - EDIT BELOW TO VIEW DATA -->
-    <h1 id="title"></h1>
-    <script type="application/javascript">
-        init();
-        document.getElementById('title').innerHTML = data.title;
-        updateLayout();
-    </script>
-    <!-- END OF EXAMPLE CODE -->
+<!-- EXAMPLE CODE - EDIT BELOW TO VIEW DATA -->
+<div id="question"></div>
+<div id="choiceContainer" class="choicecardoptions"></div>
+<script type="application/javascript">
+    init();
+    document.getElementById('question').innerHTML = window.data.question;
+    document.getElementById('choiceContainer').innerHTML = window.data.answers.map(
+        function (cur) {
+            return '<div class="checkbox checkbox-material">' +
+            '<label>' +
+            '<input type="checkbox" name="' + window.data.id + '">'
+            + cur.value +
+            '</label>' +
+            '</div>';
+        }).reduce(function (acc, cur) { return acc + cur }, "");
+    updateLayout();
+</script>
+<!-- END OF EXAMPLE CODE -->
 </body>
 </html>
