@@ -41,7 +41,7 @@
                 var isCorrect = window.data.answers[i].correct;
                 checkboxes[i].setAttribute('class',
                     isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
-                checkboxes.setAttribute('disabled', 'true');
+                checkboxes[i].setAttribute('disabled', 'true');
             }
             isShowingSolution = true;
         } else {
