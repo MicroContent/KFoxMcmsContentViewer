@@ -60,8 +60,7 @@
             for (var i = 0; i < checkboxes.length; i++) {
                 var isChecked = checkboxes[i].checked;
                 var isCorrect = window.data.answers[i].correct;
-                checkboxLabels[i].setAttribute('class', 'answerCheckboxLabel '+
-                    isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
+                checkboxLabels[i].classList.add(isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
                 checkboxes[i].setAttribute('disabled', 'true');
             }
             isShowingSolution = true;
