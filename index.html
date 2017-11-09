@@ -10,6 +10,9 @@
         function updateLayout() {
             propagateLayoutChanges();
         }
+        function setOnSubmitListener(func) {
+            registerOnSubmitListener(func)
+        }
     </script>
 </head>
 <body>
@@ -23,11 +26,33 @@
         function (cur) {
             return '<div class="checkbox checkbox-material">' +
             '<label>' +
-            '<input type="checkbox" name="' + window.data.id + '">'
+            '<input type="checkbox" class="answerCheckbox" name="' + window.data.id + '">'
             + cur.value +
             '</label>' +
             '</div>';
         }).reduce(function (acc, cur) { return acc + cur }, "");
+    var isShowingSolution = false;
+    setOnSubmitListener(function () {
+        var checkboxes = document.getElementsByClassName('answerCheckbox');
+        if(!isShowingSolution) {
+            // assign classes and disable
+            for (var i = 0; i < checkboxes.length; i++) {
+                var isChecked = checkboxes[i].checked;
+                var isCorrect = window.data.answers[i].correct;
+                checkboxes[i].setAttribute('class',
+                    isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
+                checkboxes.setAttribute('disabled', 'true');
+            }
+            isShowingSolution = true;
+        } else {
+            // remove classes and enable
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].removeAttribute('class');
+                checkboxes[i].removeAttribute('disabled');
+            }
+            isShowingSolution = false;
+        }
+    });
     updateLayout();
 </script>
 <!-- END OF EXAMPLE CODE -->
