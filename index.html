@@ -89,7 +89,7 @@
     function setContext() {
         document.getElementById('contextContainer').innerHTML =
             '<p id="showContextHeader" style="cursor: pointer; cursor: hand;" onclick="showHideContext()"></p>' +
-            '<p id="contextContainer"></p>';
+            '<p id="contextContentContainer"></p>';
         document.getElementById('contextContainer').innerHTML =
             isShowingSolution ? window.data.answerContext : window.data.questionContext;
         // we call showHide once to hide it for hint and to show it for explanation
@@ -100,10 +100,10 @@
     function showHideContext() {
         if (isContextShown) {
             document.getElementById('showContextHeader').innerHTML = 'Show ' + isShowingSolution ? 'Explanation' : 'Hint';
-            document.getElementById('contextContainer').setAttribute('hidden', '');
+            document.getElementById('contextContentContainer').setAttribute('hidden', '');
         } else {
             document.getElementById('showContextHeader').innerHTML = 'Hide ' + isShowingSolution ? 'Explanation' : 'Hint';
-            document.getElementById('contextContainer').removeAttribute('hidden');
+            document.getElementById('contextContentContainer').removeAttribute('hidden');
         }
         updateLayout();
     }
