@@ -43,7 +43,10 @@
 <!-- EXAMPLE CODE - EDIT BELOW TO VIEW DATA -->
 <div id="question"></div>
 <div id="choiceContainer" class="choicecardoptions"></div>
-<div id="contextContainer"></div>
+<div id="contextContainer">
+    <p id="showContextHeader" style="cursor: pointer; cursor: hand;" onclick="showHideContext()"></p>
+    <p id="contextContentContainer"></p>
+</div>
 <script type="application/javascript">
     function setQuestion() {
         document.getElementById('question').innerHTML = window.data.question;
@@ -87,10 +90,7 @@
     }
 
     function setContext() {
-        document.getElementById('contextContainer').innerHTML =
-            '<p id="showContextHeader" style="cursor: pointer; cursor: hand;" onclick="showHideContext()"></p>' +
-            '<p id="contextContentContainer"></p>';
-        document.getElementById('contextContainer').innerHTML =
+        document.getElementById('contextContentContainer').innerHTML =
             isShowingSolution ? window.data.answerContext : window.data.questionContext;
         // we call showHide once to hide it for hint and to show it for explanation
         isContextShown = !isShowingSolution;
