@@ -98,13 +98,15 @@
     }
 
     function showHideContext() {
+        var ctxString = isShowingSolution ? 'Explanation' : 'Hint';
         if (isContextShown) {
-            document.getElementById('showContextHeader').innerHTML = 'Show ' + isShowingSolution ? 'Explanation' : 'Hint';
+            document.getElementById('showContextHeader').innerHTML = 'Show ' + ctxString;
             document.getElementById('contextContentContainer').setAttribute('hidden', '');
         } else {
-            document.getElementById('showContextHeader').innerHTML = 'Hide ' + isShowingSolution ? 'Explanation' : 'Hint';
+            document.getElementById('showContextHeader').innerHTML = 'Hide ' + ctxString;
             document.getElementById('contextContentContainer').removeAttribute('hidden');
         }
+        isContextShown = !isContextShown;
         updateLayout();
     }
 
