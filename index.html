@@ -16,20 +16,24 @@
     </script>
     <style type="text/css">
         .choicecardoptions label {
-            color: rgba(0,0,0,0.7)
+            color: rgba(0, 0, 0, 0.7)
         }
+
         .choicecardoptions label:hover {
-            color: rgba(0,0,0,0.8)
+            color: rgba(0, 0, 0, 0.8)
         }
-        .choicecardoptions .truechecked{
+
+        .choicecardoptions .truechecked {
             color: green;
             font-weight: bold;
         }
-        .choicecardoptions .falsechecked{
+
+        .choicecardoptions .falsechecked {
             color: red;
             text-decoration: line-through;
         }
-        .choicecardoptions .trueunchecked{
+
+        .choicecardoptions .trueunchecked {
             color: green;
             font-weight: bold;
         }
@@ -39,23 +43,30 @@
 <!-- EXAMPLE CODE - EDIT BELOW TO VIEW DATA -->
 <div id="question"></div>
 <div id="choiceContainer" class="choicecardoptions"></div>
+<div id="contextContainer"></div>
 <script type="application/javascript">
-    init();
-    document.getElementById('question').innerHTML = window.data.question;
-    document.getElementById('choiceContainer').innerHTML = window.data.answers.map(
-        function (cur) {
-            return '<div class="checkbox checkbox-material">' +
-            '<label class="answerCheckboxLabel">' +
-            '<input type="checkbox" class="answerCheckbox" name="' + window.data.id + '">'
-            + cur.value +
-            '</label>' +
-            '</div>';
-        }).reduce(function (acc, cur) { return acc + cur }, "");
-    var isShowingSolution = false;
-    setOnSubmitListener(function () {
+    function setQuestion() {
+        document.getElementById('question').innerHTML = window.data.question;
+    }
+
+    function setAnswerOptions() {
+        document.getElementById('choiceContainer').innerHTML = window.data.answers.map(
+            function (cur) {
+                return '<div class="checkbox checkbox-material">' +
+                    '<label class="answerCheckboxLabel">' +
+                    '<input type="checkbox" class="answerCheckbox" name="' + window.data.id + '">'
+                    + cur.value +
+                    '</label>' +
+                    '</div>';
+            }).reduce(function (acc, cur) {
+            return acc + cur
+        }, '');
+    }
+
+    function onSubmit() {
         var checkboxLabels = document.getElementsByClassName('answerCheckboxLabel');
         var checkboxes = document.getElementsByClassName('answerCheckbox');
-        if(!isShowingSolution) {
+        if (!isShowingSolution) {
             // assign classes and disable
             for (var i = 0; i < checkboxes.length; i++) {
                 var isChecked = checkboxes[i].checked;
@@ -72,8 +83,40 @@
             }
             isShowingSolution = false;
         }
-    });
-    updateLayout();
+        setContext();
+    }
+
+    function setContext() {
+        document.getElementById('contextContainer').innerHTML =
+            '<p id="showContextHeader" style="cursor: pointer; cursor: hand;" onclick="showHideContext()"></p>' +
+            '<p id="contextContainer"></p>';
+        document.getElementById('contextContainer').innerHTML =
+            isShowingSolution ? window.data.answerContext : window.data.questionContext;
+        // we call showHide once to hide it for hint and to show it for explanation
+        isContextShown = !isShowingSolution;
+        showHideContext();
+    }
+
+    function showHideContext() {
+        if (isContextShown) {
+            document.getElementById('showContextHeader').innerHTML = 'Show ' + isShowingSolution ? 'Explanation' : 'Hint';
+            document.getElementById('contextContainer').setAttribute('hidden', '');
+        } else {
+            document.getElementById('showContextHeader').innerHTML = 'Hide ' + isShowingSolution ? 'Explanation' : 'Hint';
+            document.getElementById('contextContainer').removeAttribute('hidden');
+        }
+        updateLayout();
+    }
+
+    init();
+
+    var isShowingSolution = false;
+    var isContextShown = false;
+
+    setQuestion();
+    setAnswerOptions();
+    setOnSubmitListener(onSubmit);
+    setContext();
 </script>
 <!-- END OF EXAMPLE CODE -->
 </body>
