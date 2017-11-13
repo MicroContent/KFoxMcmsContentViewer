@@ -6,12 +6,14 @@
     <script type="application/javascript">
         function init() {
             window.data = getData();
+            setXapiObjectGetter(getXapiObject);
+            registerOnSubmitListener(onSubmit);
         }
         function updateLayout() {
             propagateLayoutChanges();
         }
-        function setOnSubmitListener(func) {
-            registerOnSubmitListener(func)
+        function sendStatement(stmt) {
+            sendXapiStatement(stmt);
         }
     </script>
     <style type="text/css">
@@ -54,29 +56,113 @@
 
     function setAnswerOptions() {
         document.getElementById('choiceContainer').innerHTML = window.data.answers.map(
-            function (cur) {
-                return '<div class="checkbox checkbox-material">' +
-                    '<label class="answerCheckboxLabel">' +
-                    '<input type="checkbox" class="answerCheckbox" name="' + window.data.id + '">'
-                    + cur.value +
-                    '</label>' +
-                    '</div>';
-            }).reduce(function (acc, cur) {
+                function (cur) {
+                    return '<div class="checkbox checkbox-material">' +
+                            '<label class="answerCheckboxLabel">' +
+                            '<input type="checkbox" class="answerCheckbox" name="' + window.data.id + '" onclick="onInteraction()">'
+                            + cur.value +
+                            '</label>' +
+                            '</div>';
+                }).reduce(function (acc, cur) {
             return acc + cur
         }, '');
+    }
+
+    function onInteraction() {
+        var stmt = {};
+        // actor is set by hosting application
+        stmt.actor = undefined;
+        stmt.verb = {
+            "id": "http://adlnet.gov/expapi/verbs/interacted",
+            "display": {
+                "de-DE": "interagierte",
+                "en-US": "interacted",
+                "fr-FR": "a interagi",
+                "es-ES": "interactuó"
+            }
+        };
+        stmt.object = getXapiObject();
+        var checkboxes = document.getElementsByClassName('answerCheckbox');
+        var responses = [];
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                responses.push(i.toString());
+            }
+        }
+        stmt.result = {
+            response: responses.reduce(function (acc, e) {
+                return (acc.length > 0 && e.length > 0) ? acc + "[,]" + e : acc.length > 0 ? acc : e;
+            }, "")
+        };
+        sendStatement(stmt);
+    }
+
+    function getXapiObject() {
+        return {
+            "objectType": "Activity",
+            // id is set by hosting application
+            "id": undefined,
+            "definition": {
+                "description": {
+                    "de-AT": window.data.question
+                },
+                "type": "http://adlnet.gov/expapi/activities/cmi.interaction",
+                "interactionType": "choice",
+                "choices": data.answers.map(function (e, i) {
+                    return {
+                        id: i.toString(),
+                        description: {
+                            "de-AT": e.value
+                        }
+                    }
+                }),
+                "correctResponsesPattern": [data.answers.map(function (e, i) {
+                            return e.correct ? i.toString() : ""
+                        })
+                        .reduce(function (acc, e) {
+                            return (acc.length > 0 && e.length > 0) ? acc + "[,]" + e : acc.length > 0 ? acc : e;
+                        }, "")]
+            }
+        };
     }
 
     function onSubmit() {
         var checkboxLabels = document.getElementsByClassName('answerCheckboxLabel');
         var checkboxes = document.getElementsByClassName('answerCheckbox');
         if (!isShowingSolution) {
+            var responses = [];
+            var allRight = true;
             // assign classes and disable
             for (var i = 0; i < checkboxes.length; i++) {
                 var isChecked = checkboxes[i].checked;
                 var isCorrect = window.data.answers[i].correct;
+                allRight = allRight && (isChecked === isCorrect);
                 checkboxLabels[i].classList.add(isChecked ? (isCorrect ? 'truechecked' : 'falsechecked') : (isCorrect ? 'trueunchecked' : 'falseunchecked'));
                 checkboxes[i].setAttribute('disabled', 'true');
+                if (isChecked) {
+                    responses.push(i.toString());
+                }
             }
+            var stmt = {};
+            // actor is set by hosting application
+            stmt.actor = undefined;
+            stmt.verb = {
+                "id": "http://adlnet.gov/expapi/verbs/answered",
+                "display": {
+                    "de-DE": "beantwortete",
+                    "en-US": "answered",
+                    "fr-FR": "a répondu",
+                    "es-ES": "contestó"
+                }
+            };
+            stmt.object = getXapiObject();
+            stmt.result = {
+                response: responses.reduce(function (acc, e) {
+                    return (acc.length > 0 && e.length > 0) ? acc + "[,]" + e : acc.length > 0 ? acc : e;
+                }, ""),
+                success: allRight
+            };
+            sendStatement(stmt);
             isShowingSolution = true;
         } else {
             // remove classes and enable
@@ -91,7 +177,7 @@
 
     function setContext() {
         document.getElementById('contextContentContainer').innerHTML =
-            isShowingSolution ? window.data.answerContext : window.data.questionContext;
+                isShowingSolution ? window.data.answerContext : window.data.questionContext;
         // we call showHide once to hide it for hint and to show it for explanation
         isContextShown = !isShowingSolution;
         showHideContext();
@@ -117,7 +203,6 @@
 
     setQuestion();
     setAnswerOptions();
-    setOnSubmitListener(onSubmit);
     setContext();
 </script>
 <!-- END OF EXAMPLE CODE -->
