@@ -176,6 +176,15 @@
     }
 
     function setContext() {
+        var context = document.getElementById('contextContainer');
+ 
+        if (window.data.answerContext.length == 0 && isShowingSolution) {
+            context.setAttribute('hidden', '');
+        } else if (isShowingSolution) context.removeAttribute('hidden');
+        if (window.data.questionContext.length == 0 && !isShowingSolution) {
+            context.setAttribute('hidden', '');
+        } else if (!isShowingSolution) context.removeAttribute('hidden');
+
         document.getElementById('contextContentContainer').innerHTML =
                 isShowingSolution ? window.data.answerContext : window.data.questionContext;
         // we call showHide once to hide it for hint and to show it for explanation
